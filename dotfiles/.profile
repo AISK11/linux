@@ -18,6 +18,3 @@ export PATH=''
 [ -d "${HOME}/.local/bin" ] && PATH="${PATH}:${HOME}/.local/bin"
 [ -d "${HOME}/bin" ]        && PATH="${PATH}:${HOME}/bin"
 PATH="${PATH#:}"
-
-## XDG environment.
-export XDG_CONFIG_HOME="${HOME}/.config"
