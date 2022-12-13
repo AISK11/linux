@@ -19,14 +19,5 @@ export PATH=''
 [ -d "${HOME}/bin" ]        && PATH="${PATH}:${HOME}/bin"
 PATH="${PATH#:}"
 
-## Command prompts.
-if [ "$(whoami)" = 'root' ]
-then
-    export PS1='# '
-else
-    export PS1='$ '
-fi
-export PS2='> '
-
 ## XDG environment.
 export XDG_CONFIG_HOME="${HOME}/.config"
