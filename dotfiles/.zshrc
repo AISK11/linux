@@ -300,7 +300,7 @@ alias nvrun='__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia'
 getshell() {
     SHELLFILE="$(\ps -o cmd -h -p ${$} | \cut -d " " -f 1)"
     [ "${SHELLFILE#-}" != "${SHELLFILE}" ] && ISLOGIN='-' || ISLOGIN=''
-    \echo "${ILOGIN}$(\basename $(\readlink -f "${SHELLFILE#-}"))"
+    \echo "${ISLOGIN}$(\basename $(\readlink -f "${SHELLFILE#-}"))"
 }
 
 
