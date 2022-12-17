@@ -3,7 +3,9 @@
 ## DEPENDENCIES: zsh [zsh-autosuggestions] [zsh-syntax-highlighting]
 ## DESCRIPTION:  Interactive zsh config file.
 
-## INVOCATION.
+################################################################################
+##                                 INVOCATION                                 ##
+################################################################################
 ##        +-----------------+  +--------------------+
 ## START->| /etc/zsh/zshenv |->| ${ZDOTDIR}/.zshenv |
 ##        +-----------------+  +--------------------+
@@ -232,11 +234,6 @@ alias file='\file -p'
 alias grep='\grep --color=${COLOR_MODE}'
 alias egrep='\grep -E --color=${COLOR_MODE}'
 alias diff='\diff --color=${COLOR_MODE} -s'
-if [ "${TERM}" = 'linux' ]; then
-    alias bat='\bat --style=plain --paging=auto --color=${COLOR_MODE}'
-else
-    alias bat='\bat --style=full --paging=auto --color=${COLOR_MODE}'
-fi
 alias nl='\nl -s " "'
 
 ## Multimedia.
@@ -258,9 +255,6 @@ if [ -n "$(command -vp lsd)" ]; then
 fi
 
 ## Text reading.
-if [ -n "$(command -vp bat)" ]; then
-    alias cat='\bat --style=plain --paging=auto --color=${COLOR_MODE}'
-fi
 if [ -z "$(command -vp xxd)" ]; then
     alias xxd='\hexdump -C'
 fi
@@ -304,9 +298,9 @@ alias nvrun='__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia'
 ################################################################################
 ## Filesystem.
 getshell() {
-    SHELL="$(\ps -o cmd -h -p ${$} | \cut -d " " -f 1)"
-    [ "${SHELL#-}" != "${SHELL}" ] && LOGIN='-' || LOGIN=''
-    \echo "${LOGIN}$(\basename $(\readlink -f "${SHELL#-}"))"
+    SHELLFILE="$(\ps -o cmd -h -p ${$} | \cut -d " " -f 1)"
+    [ "${SHELLFILE#-}" != "${SHELLFILE}" ] && ISLOGIN='-' || ISLOGIN=''
+    \echo "${ILOGIN}$(\basename $(\readlink -f "${SHELLFILE#-}"))"
 }
 
 
