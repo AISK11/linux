@@ -1,6 +1,6 @@
 ## AUTHOR:       AISK11
 ## LOCATION:     ~/.zshrc (0644)
-## DEPENDENCIES: zsh [zsh-autosuggestions] [zsh-syntax-highlighting]
+## DEPENDENCIES: zsh [zsh-syntax-highlighting] [zsh-autosuggestions]
 ## DESCRIPTION:  Interactive zsh config file.
 
 ################################################################################
@@ -69,6 +69,7 @@ setopt   INTERACTIVE_COMMENTS
 
 ## Shell emulation.
 setopt   BSD_ECHO
+setopt   SH_WORD_SPLIT
 
 ## Zle.
 unsetopt BEEP
@@ -303,27 +304,110 @@ getshell() {
     \echo "${ISLOGIN}$(\basename $(\readlink -f "${SHELLFILE#-}"))"
 }
 
-
-
-
-
-
-
-
-## ToDo
-
-## ^C not shown
-## alias expansion
-## cod implementation
-
 ################################################################################
-##                                  MODULES                                   ##
+##                                 EXTENSIONS                                 ##
 ################################################################################
+########################################
+##        SYNTAX HIGHLIGHTING         ##
+########################################
+## Docs: 'https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/docs/highlighters.md'.
+## Enable syntax highlighting.
+if [ -f '/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh' ]; then
+    . /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+## Color highligters.
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
+
+## Colors (main).
+ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=red'
+ZSH_HIGHLIGHT_STYLES[reserved-word]='fg=yellow'
+ZSH_HIGHLIGHT_STYLES[alias]='fg=green,underline'
+ZSH_HIGHLIGHT_STYLES[suffix-alias]='none'
+ZSH_HIGHLIGHT_STYLES[global-alias]='none'
+ZSH_HIGHLIGHT_STYLES[builtin]='fg=yellow'
+ZSH_HIGHLIGHT_STYLES[function]='fg=green,underline'
+ZSH_HIGHLIGHT_STYLES[command]='fg=green'
+ZSH_HIGHLIGHT_STYLES[precommand]='fg=yellow,underline'
+ZSH_HIGHLIGHT_STYLES[commandseparator]='fg=yellow'
+ZSH_HIGHLIGHT_STYLES[hashed-command]='none'
+ZSH_HIGHLIGHT_STYLES[autodirectory]='fg=blue'
+ZSH_HIGHLIGHT_STYLES[path]='fg=white,underline'
+ZSH_HIGHLIGHT_STYLES[path-separator]='none'
+ZSH_HIGHLIGHT_STYLES[path_prefix_pathseparator]='none'
+ZSH_HIGHLIGHT_STYLES[globbing]='fg=magenta'
+ZSH_HIGHLIGHT_STYLES[history-expansion]='fg=magenta'
+ZSH_HIGHLIGHT_STYLES[command-substitution]='fg=magenta'
+ZSH_HIGHLIGHT_STYLES[command-substitution-unquoted]='fg=magenta'
+ZSH_HIGHLIGHT_STYLES[command-substitution-quoted]='fg=magenta'
+ZSH_HIGHLIGHT_STYLES[command-substitution-delimiter]='fg=magenta'
+ZSH_HIGHLIGHT_STYLES[command-substitution-delimiter-unquoted]='fg=magenta'
+ZSH_HIGHLIGHT_STYLES[command-substitution-delimiter-quoted]='fg=magenta'
+ZSH_HIGHLIGHT_STYLES[process-substitution]='fg=magenta'
+ZSH_HIGHLIGHT_STYLES[process-substitution-delimiter]='fg=magenta'
+ZSH_HIGHLIGHT_STYLES[arithmetic-expansion]='fg=magenta'
+ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='fg=cyan'
+ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='fg=cyan'
+ZSH_HIGHLIGHT_STYLES[back-quoted-argument]='fg=magenta'
+ZSH_HIGHLIGHT_STYLES[back-quoted-argument-unclosed]='fg=red'
+ZSH_HIGHLIGHT_STYLES[back-quoted-argument-delimiter]='none'
+ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=yellow'
+ZSH_HIGHLIGHT_STYLES[single-quoted-argument-unclosed]='fg=red'
+ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=yellow'
+ZSH_HIGHLIGHT_STYLES[double-quoted-argument-unclosed]='fg=red'
+ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]='none'
+ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument-unclosed]='none'
+ZSH_HIGHLIGHT_STYLES[rc-quote]='none'
+ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]='fg=magenta'
+ZSH_HIGHLIGHT_STYLES[back-double-quoted-argument]='fg=magenta'
+ZSH_HIGHLIGHT_STYLES[back-dollar-quoted-argument]='none'
+ZSH_HIGHLIGHT_STYLES[assign]='fg=magenta'
+ZSH_HIGHLIGHT_STYLES[redirection]='fg=yellow'
+ZSH_HIGHLIGHT_STYLES[comment]='fg=black,bold'
+ZSH_HIGHLIGHT_STYLES[named-fd]='fg=yellow'
+ZSH_HIGHLIGHT_STYLES[numeric-fd]='fg=yellow'
+ZSH_HIGHLIGHT_STYLES[arg0]='none'
+ZSH_HIGHLIGHT_STYLES[default]='fg=white'
+
+## Colors (brackets).
+ZSH_HIGHLIGHT_STYLES[bracket-error]='fg=red'
+ZSH_HIGHLIGHT_STYLES[cursor-matchingbracket]='standout'
+ZSH_HIGHLIGHT_STYLES[bracket-level-1]='fg=magenta'
+ZSH_HIGHLIGHT_STYLES[bracket-level-2]='fg=magenta'
+ZSH_HIGHLIGHT_STYLES[bracket-level-3]='fg=magenta'
+ZSH_HIGHLIGHT_STYLES[bracket-level-4]='fg=magenta'
+ZSH_HIGHLIGHT_STYLES[bracket-level-5]='fg=magenta'
+
+########################################
+##         HISTORY COMPLETION         ##
+########################################
+## Docs: 'https://github.com/zsh-users/zsh-autosuggestions'.
+## Show history commands to match completion in ZLE.
+if [ -f '/usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh' ]; then
+    . /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+fi
+
+## Set autosuggestion color (0-7 || 0-F) (for TTY it's white).
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=black,bold,underline'
+
+
+
+
+
+
+
+########################################
+##          ALIAS EXPANSION           ##
+########################################
+## Source: 'https://dev.to/frost/fish-style-abbreviations-in-zsh-40aa'.
+
+
+
+
 ########################################
 ##     COMMAND NOT FOUND HANDLER      ##
 ########################################
-## ANSI escape code colors.
-## For details see: https://en.wikipedia.org/wiki/ANSI_escape_code
+## ANSI escape code colors (https://en.wikipedia.org/wiki/ANSI_escape_code).
 export ANSI_BLACK="\e[30m"
 export ANSI_RED="\e[31m"
 export ANSI_GREEN="\e[32m"
@@ -335,14 +419,15 @@ export ANSI_WHITE="\e[37m"
 export ANSI_RESET="\e[0m"
 
 ## How to handle, when command does not exists.
-#if [ -r '/etc/zsh_command_not_found' ]; then
-#    . /etc/zsh_command_not_found
-#else
+if [ -r '/etc/zsh_command_not_found' ]; then
+    #. /etc/zsh_command_not_found
+    echo -en "${ANSI_YELLOW}" ; . /etc/zsh_command_not_found ; echo -en "${ANSI_RESET}"
+else
     command_not_found_handler () {
         echo -e "${ANSI_RED}Command '${0}' not found!${ANSI_RESET}"
         return 127
     }
-#fi
+fi
 
 ########################################
 ##          AUTO COMPLETION           ##
@@ -354,24 +439,6 @@ autoload -Uz compinit
 zstyle ':completion:*' menu select
 zmodload zsh/complist
 compinit
-
-########################################
-##         HISTORY COMPLETION         ##
-########################################
-## Show history commands to match completion in ZLE.
-[ -f '/usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh' ] &&
-. /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-
-## Set autosuggestion color (0-7 || 0-F) (for TTY it's white).
-export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#${THEME_COLOR_CLI_8}"
-
-########################################
-##        SYNTAX HIGHLIGHTING         ##
-########################################
-## Enable syntax highlighting.
-## Docs: https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/docs/highlighters.md
-[ -f '/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh' ] &&
-. /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 ################################################################################
 ##                                  EXECUTE                                   ##
@@ -450,63 +517,63 @@ tabs 4
 
 ## Theme selection.
 #THEME='1337'
-THEME='github-dark'
+#THEME='github-dark'
 #THEME='hybrid'
 
-if [ "${THEME}" = '1337' ]; then
-    COLOR='00ff00'
-    THEME_COLOR_CLI_0='000000' ## Black
-    THEME_COLOR_CLI_1="${COLOR}" ## Red
-    THEME_COLOR_CLI_2="${COLOR}" ## Green
-    THEME_COLOR_CLI_3="${COLOR}" ## Yellow
-    THEME_COLOR_CLI_4="${COLOR}" ## Blue
-    THEME_COLOR_CLI_5="${COLOR}" ## Magenta
-    THEME_COLOR_CLI_6="${COLOR}" ## Cyan
-    THEME_COLOR_CLI_7="${COLOR}" ## White
-    THEME_COLOR_CLI_8="${COLOR}" ## Bright Black
-    THEME_COLOR_CLI_9="${COLOR}" ## Bright Red
-    THEME_COLOR_CLI_A="${COLOR}" ## Bright Green
-    THEME_COLOR_CLI_B="${COLOR}" ## Bright Yellow
-    THEME_COLOR_CLI_C="${COLOR}" ## Bright Blue
-    THEME_COLOR_CLI_D="${COLOR}" ## Bright Magenta
-    THEME_COLOR_CLI_E="${COLOR}" ## Bright Cyan
-    THEME_COLOR_CLI_F="${COLOR}" ## Bright White
-## Github Dark theme: https://github.com/vv9k/vim-github-dark.
-elif [ "${THEME}" = 'github-dark' ]; then
-    THEME_COLOR_CLI_0='0d1117' ## Black
-    THEME_COLOR_CLI_1='fa7970' ## Red
-    THEME_COLOR_CLI_2='7ce38b' ## Green
-    THEME_COLOR_CLI_3='faa356' ## Yellow
-    THEME_COLOR_CLI_4='77bdfb' ## Blue
-    THEME_COLOR_CLI_5='cea5fb' ## Magenta
-    THEME_COLOR_CLI_6='a2d2fb' ## Cyan
-    THEME_COLOR_CLI_7='ecf2f8' ## White
-    THEME_COLOR_CLI_8='89929b' ## Bright Black
-    THEME_COLOR_CLI_9='fa7970' ## Bright Red
-    THEME_COLOR_CLI_A='7ce38b' ## Bright Green
-    THEME_COLOR_CLI_B='faa356' ## Bright Yellow
-    THEME_COLOR_CLI_C='77bdfb' ## Bright Blue
-    THEME_COLOR_CLI_D='cea5fb' ## Bright Magenta
-    THEME_COLOR_CLI_E='a2d2fb' ## Bright Cyan
-    THEME_COLOR_CLI_F='ffffff' ## Bright White
-## Hybrid theme: https://github.com/devinceble/Elementary-OS-Terminal-Colors/blob/master/images/Hybrid.png.
-elif [ "${THEME}" = 'hybrid' ]; then
-    THEME_COLOR_CLI_0='282a2e' ## Black
-    THEME_COLOR_CLI_1='a54242' ## Red
-    THEME_COLOR_CLI_2='8c9440' ## Green
-    THEME_COLOR_CLI_3='de935f' ## Yellow
-    THEME_COLOR_CLI_4='5f819d' ## Blue
-    THEME_COLOR_CLI_5='85678f' ## Magenta
-    THEME_COLOR_CLI_6='5e8d87' ## Cyan
-    THEME_COLOR_CLI_7='969896' ## White
-    THEME_COLOR_CLI_8='373b41' ## Bright Black
-    THEME_COLOR_CLI_9='cc6666' ## Bright Red
-    THEME_COLOR_CLI_A='b5bd68' ## Bright Green
-    THEME_COLOR_CLI_B='f0c674' ## Bright Yellow
-    THEME_COLOR_CLI_C='81a2be' ## Bright Blue
-    THEME_COLOR_CLI_D='b294bb' ## Bright Magenta
-    THEME_COLOR_CLI_E='8abeb7' ## Bright Cyan
-    THEME_COLOR_CLI_F='c5c8c6' ## Bright White
-fi
+#if [ "${THEME}" = '1337' ]; then
+#    COLOR='00ff00'
+#    THEME_COLOR_CLI_0='000000' ## Black
+#    THEME_COLOR_CLI_1="${COLOR}" ## Red
+#    THEME_COLOR_CLI_2="${COLOR}" ## Green
+#    THEME_COLOR_CLI_3="${COLOR}" ## Yellow
+#    THEME_COLOR_CLI_4="${COLOR}" ## Blue
+#    THEME_COLOR_CLI_5="${COLOR}" ## Magenta
+#    THEME_COLOR_CLI_6="${COLOR}" ## Cyan
+#    THEME_COLOR_CLI_7="${COLOR}" ## White
+#    THEME_COLOR_CLI_8="${COLOR}" ## Bright Black
+#    THEME_COLOR_CLI_9="${COLOR}" ## Bright Red
+#    THEME_COLOR_CLI_A="${COLOR}" ## Bright Green
+#    THEME_COLOR_CLI_B="${COLOR}" ## Bright Yellow
+#    THEME_COLOR_CLI_C="${COLOR}" ## Bright Blue
+#    THEME_COLOR_CLI_D="${COLOR}" ## Bright Magenta
+#    THEME_COLOR_CLI_E="${COLOR}" ## Bright Cyan
+#    THEME_COLOR_CLI_F="${COLOR}" ## Bright White
+### Github Dark theme: https://github.com/vv9k/vim-github-dark.
+#elif [ "${THEME}" = 'github-dark' ]; then
+#    THEME_COLOR_CLI_0='0d1117' ## Black
+#    THEME_COLOR_CLI_1='fa7970' ## Red
+#    THEME_COLOR_CLI_2='7ce38b' ## Green
+#    THEME_COLOR_CLI_3='faa356' ## Yellow
+#    THEME_COLOR_CLI_4='77bdfb' ## Blue
+#    THEME_COLOR_CLI_5='cea5fb' ## Magenta
+#    THEME_COLOR_CLI_6='a2d2fb' ## Cyan
+#    THEME_COLOR_CLI_7='ecf2f8' ## White
+#    THEME_COLOR_CLI_8='89929b' ## Bright Black
+#    THEME_COLOR_CLI_9='fa7970' ## Bright Red
+#    THEME_COLOR_CLI_A='7ce38b' ## Bright Green
+#    THEME_COLOR_CLI_B='faa356' ## Bright Yellow
+#    THEME_COLOR_CLI_C='77bdfb' ## Bright Blue
+#    THEME_COLOR_CLI_D='cea5fb' ## Bright Magenta
+#    THEME_COLOR_CLI_E='a2d2fb' ## Bright Cyan
+#    THEME_COLOR_CLI_F='ffffff' ## Bright White
+### Hybrid theme: https://github.com/devinceble/Elementary-OS-Terminal-Colors/blob/master/images/Hybrid.png.
+#elif [ "${THEME}" = 'hybrid' ]; then
+#    THEME_COLOR_CLI_0='282a2e' ## Black
+#    THEME_COLOR_CLI_1='a54242' ## Red
+#    THEME_COLOR_CLI_2='8c9440' ## Green
+#    THEME_COLOR_CLI_3='de935f' ## Yellow
+#    THEME_COLOR_CLI_4='5f819d' ## Blue
+#    THEME_COLOR_CLI_5='85678f' ## Magenta
+#    THEME_COLOR_CLI_6='5e8d87' ## Cyan
+#    THEME_COLOR_CLI_7='969896' ## White
+#    THEME_COLOR_CLI_8='373b41' ## Bright Black
+#    THEME_COLOR_CLI_9='cc6666' ## Bright Red
+#    THEME_COLOR_CLI_A='b5bd68' ## Bright Green
+#    THEME_COLOR_CLI_B='f0c674' ## Bright Yellow
+#    THEME_COLOR_CLI_C='81a2be' ## Bright Blue
+#    THEME_COLOR_CLI_D='b294bb' ## Bright Magenta
+#    THEME_COLOR_CLI_E='8abeb7' ## Bright Cyan
+#    THEME_COLOR_CLI_F='c5c8c6' ## Bright White
+#fi
 
 
