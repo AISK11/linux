@@ -308,6 +308,18 @@ getshell() {
 ##                                 EXTENSIONS                                 ##
 ################################################################################
 ########################################
+##               CURSOR               ##
+########################################
+## Source: 'https://orelfichman.com/blog/terminal-escape-codes-are-awesome'.
+#echo -e '\e[0 q' ## Reset to default.
+#echo -e '\e[1 q' ## Blinking block.
+#echo -e '\e[2 q' ## Steady block (Default).
+#echo -e '\e[3 q' ## Blinking underscore.
+#echo -e '\e[4 q' ## Steady underscore.
+echo -e '\e[5 q' ## Blinking bar.
+#echo -e '\e[6 q' ## Steady bar.
+
+########################################
 ##        SYNTAX HIGHLIGHTING         ##
 ########################################
 ## Docs: 'https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/docs/highlighters.md'.
@@ -316,7 +328,7 @@ if [ -f '/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh' ]; then
     . /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
     ## Color highligters.
-    ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
+    ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets cursor)
 
     ## Colors (main).
     ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=red'
@@ -376,6 +388,9 @@ if [ -f '/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh' ]; then
     ZSH_HIGHLIGHT_STYLES[bracket-level-3]='fg=magenta'
     ZSH_HIGHLIGHT_STYLES[bracket-level-4]='fg=magenta'
     ZSH_HIGHLIGHT_STYLES[bracket-level-5]='fg=magenta'
+
+    ## Colors (cursor).
+    ZSH_HIGHLIGHT_STYLES[cursor]='bold'
 fi
 
 ########################################
@@ -390,18 +405,16 @@ if [ -f '/usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh' ]; then
     export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=black,bold,underline'
 fi
 
-
-
-
-
-
 ########################################
-##          ALIAS EXPANSION           ##
+##          AUTO COMPLETION           ##
 ########################################
-## Source: 'https://dev.to/frost/fish-style-abbreviations-in-zsh-40aa'.
+## Load autocompletion.
+autoload -Uz compinit
 
-
-
+## Menu selection.
+zstyle ':completion:*' menu select
+zmodload zsh/complist
+compinit
 
 ########################################
 ##     COMMAND NOT FOUND HANDLER      ##
@@ -419,8 +432,7 @@ export ANSI_RESET="\e[0m"
 
 ## How to handle, when command does not exists.
 if [ -r '/etc/zsh_command_not_found' ]; then
-    #. /etc/zsh_command_not_found
-    echo -en "${ANSI_YELLOW}" ; . /etc/zsh_command_not_found ; echo -en "${ANSI_RESET}"
+    . /etc/zsh_command_not_found
 else
     command_not_found_handler () {
         echo -e "${ANSI_RED}Command '${0}' not found!${ANSI_RESET}"
@@ -429,15 +441,9 @@ else
 fi
 
 ########################################
-##          AUTO COMPLETION           ##
+##          ALIAS EXPANSION           ##
 ########################################
-## Load autocompletion.
-autoload -Uz compinit
-
-## Menu selection.
-zstyle ':completion:*' menu select
-zmodload zsh/complist
-compinit
+## Source: 'https://dev.to/frost/fish-style-abbreviations-in-zsh-40aa'.
 
 ################################################################################
 ##                                  EXECUTE                                   ##
@@ -446,9 +452,59 @@ compinit
 ##            TTY SPECIFIC            ##
 ########################################
 if [ "${TERM}" = "linux" ]; then
-    ####################
-    ##     COLORS     ##
-    ####################
+    ## Load unicode font support.
+    unicode_start
+
+    ## Set PSFU font manually.
+    [ -f '/usr/share/consolefonts/Uni1-Fixed16.psf.gz' ] && \
+        setfont Uni1-Fixed16
+
+    ## Set up numlock, capslock and scrolllock.
+    setleds -D +num
+    setleds -D -caps
+    setleds -D -scroll
+
+    ## Terminal colors.
+    #THEME='1337'
+    THEME='github-dark'
+
+    if [ "${THEME}" = '1337' ]; then
+        COLOR='00ff00'
+        THEME_COLOR_CLI_0='000000' ## Black
+        THEME_COLOR_CLI_1="${COLOR}" ## Red
+        THEME_COLOR_CLI_2="${COLOR}" ## Green
+        THEME_COLOR_CLI_3="${COLOR}" ## Yellow
+        THEME_COLOR_CLI_4="${COLOR}" ## Blue
+        THEME_COLOR_CLI_5="${COLOR}" ## Magenta
+        THEME_COLOR_CLI_6="${COLOR}" ## Cyan
+        THEME_COLOR_CLI_7="${COLOR}" ## White
+        THEME_COLOR_CLI_8="${COLOR}" ## Bright Black
+        THEME_COLOR_CLI_9="${COLOR}" ## Bright Red
+        THEME_COLOR_CLI_A="${COLOR}" ## Bright Green
+        THEME_COLOR_CLI_B="${COLOR}" ## Bright Yellow
+        THEME_COLOR_CLI_C="${COLOR}" ## Bright Blue
+        THEME_COLOR_CLI_D="${COLOR}" ## Bright Magenta
+        THEME_COLOR_CLI_E="${COLOR}" ## Bright Cyan
+        THEME_COLOR_CLI_F="${COLOR}" ## Bright White
+    elif [ "${THEME}" = 'github-dark' ]; then
+        THEME_COLOR_CLI_0='0d1117' ## Black
+        THEME_COLOR_CLI_1='fa7970' ## Red
+        THEME_COLOR_CLI_2='7ce38b' ## Green
+        THEME_COLOR_CLI_3='faa356' ## Yellow
+        THEME_COLOR_CLI_4='77bdfb' ## Blue
+        THEME_COLOR_CLI_5='cea5fb' ## Magenta
+        THEME_COLOR_CLI_6='a2d2fb' ## Cyan
+        THEME_COLOR_CLI_7='ecf2f8' ## White
+        THEME_COLOR_CLI_8='89929b' ## Bright Black
+        THEME_COLOR_CLI_9='fa7970' ## Bright Red
+        THEME_COLOR_CLI_A='7ce38b' ## Bright Green
+        THEME_COLOR_CLI_B='faa356' ## Bright Yellow
+        THEME_COLOR_CLI_C='77bdfb' ## Bright Blue
+        THEME_COLOR_CLI_D='cea5fb' ## Bright Magenta
+        THEME_COLOR_CLI_E='a2d2fb' ## Bright Cyan
+        THEME_COLOR_CLI_F='ffffff' ## Bright White
+    fi
+
     echo -en "\033]P0${THEME_COLOR_CLI_0}" ## Black
     echo -en "\033]P1${THEME_COLOR_CLI_1}" ## Red
     echo -en "\033]P2${THEME_COLOR_CLI_2}" ## Green
@@ -466,113 +522,19 @@ if [ "${TERM}" = "linux" ]; then
     echo -en "\033]PE${THEME_COLOR_CLI_E}" ## Bright Cyan
     echo -en "\033]PF${THEME_COLOR_CLI_F}" ## Bright White
 
-    ####################
-    ##     CURSOR     ##
-    ####################
-#    ## Default cursor (blinking underscore).
-#    echo -en "\e[?;;c"
-
-#    echo -en "\e[?;;c"
-#echo -en "\e[?25h"
-
-
-    ####################
-    ##      FONT      ##
-    ####################
-    ## Load unicode font support.
-    unicode_start
-
-    ## Set PSFU font manually.
-    [ -f '/usr/share/consolefonts/Uni1-Fixed16.psf.gz' ] && \
-        setfont Uni1-Fixed16
-
-    ####################
-    ##    KEYBOARD    ##
-    ####################
-    ## Set up numlock, capslock and scrolllock.
-    setleds -D +num
-    setleds -D -caps
-    setleds -D -scroll
+    ## Unset temporary (non-exported) variables.
+    unset THEME THEME_COLOR_CLI_0 THEME_COLOR_CLI_1 THEME_COLOR_CLI_2 \
+    THEME_COLOR_CLI_3 THEME_COLOR_CLI_4 THEME_COLOR_CLI_5 THEME_COLOR_CLI_6 \
+    THEME_COLOR_CLI_7 THEME_COLOR_CLI_8 THEME_COLOR_CLI_9 THEME_COLOR_CLI_A \
+    THEME_COLOR_CLI_B THEME_COLOR_CLI_C THEME_COLOR_CLI_D THEME_COLOR_CLI_E \
+    THEME_COLOR_CLI_F
 fi
 
-## Unset temporary (non-exported) variables.
-unset THEME THEME_COLOR_CLI_0 THEME_COLOR_CLI_1 THEME_COLOR_CLI_2 \
-THEME_COLOR_CLI_3 THEME_COLOR_CLI_4 THEME_COLOR_CLI_5 THEME_COLOR_CLI_6 \
-THEME_COLOR_CLI_7 THEME_COLOR_CLI_8 THEME_COLOR_CLI_9 THEME_COLOR_CLI_A \
-THEME_COLOR_CLI_B THEME_COLOR_CLI_C THEME_COLOR_CLI_D THEME_COLOR_CLI_E \
-THEME_COLOR_CLI_F
-
+########################################
+##              GENERAL               ##
+########################################
 ## Set tab width to 4 (default: 8).
 tabs 4
 
 ## Security clear.
-#clear
-
-
-########################################
-##               THEMES               ##
-########################################
-## See: https://terminal.sexy.
-
-## Theme selection.
-#THEME='1337'
-#THEME='github-dark'
-#THEME='hybrid'
-
-#if [ "${THEME}" = '1337' ]; then
-#    COLOR='00ff00'
-#    THEME_COLOR_CLI_0='000000' ## Black
-#    THEME_COLOR_CLI_1="${COLOR}" ## Red
-#    THEME_COLOR_CLI_2="${COLOR}" ## Green
-#    THEME_COLOR_CLI_3="${COLOR}" ## Yellow
-#    THEME_COLOR_CLI_4="${COLOR}" ## Blue
-#    THEME_COLOR_CLI_5="${COLOR}" ## Magenta
-#    THEME_COLOR_CLI_6="${COLOR}" ## Cyan
-#    THEME_COLOR_CLI_7="${COLOR}" ## White
-#    THEME_COLOR_CLI_8="${COLOR}" ## Bright Black
-#    THEME_COLOR_CLI_9="${COLOR}" ## Bright Red
-#    THEME_COLOR_CLI_A="${COLOR}" ## Bright Green
-#    THEME_COLOR_CLI_B="${COLOR}" ## Bright Yellow
-#    THEME_COLOR_CLI_C="${COLOR}" ## Bright Blue
-#    THEME_COLOR_CLI_D="${COLOR}" ## Bright Magenta
-#    THEME_COLOR_CLI_E="${COLOR}" ## Bright Cyan
-#    THEME_COLOR_CLI_F="${COLOR}" ## Bright White
-### Github Dark theme: https://github.com/vv9k/vim-github-dark.
-#elif [ "${THEME}" = 'github-dark' ]; then
-#    THEME_COLOR_CLI_0='0d1117' ## Black
-#    THEME_COLOR_CLI_1='fa7970' ## Red
-#    THEME_COLOR_CLI_2='7ce38b' ## Green
-#    THEME_COLOR_CLI_3='faa356' ## Yellow
-#    THEME_COLOR_CLI_4='77bdfb' ## Blue
-#    THEME_COLOR_CLI_5='cea5fb' ## Magenta
-#    THEME_COLOR_CLI_6='a2d2fb' ## Cyan
-#    THEME_COLOR_CLI_7='ecf2f8' ## White
-#    THEME_COLOR_CLI_8='89929b' ## Bright Black
-#    THEME_COLOR_CLI_9='fa7970' ## Bright Red
-#    THEME_COLOR_CLI_A='7ce38b' ## Bright Green
-#    THEME_COLOR_CLI_B='faa356' ## Bright Yellow
-#    THEME_COLOR_CLI_C='77bdfb' ## Bright Blue
-#    THEME_COLOR_CLI_D='cea5fb' ## Bright Magenta
-#    THEME_COLOR_CLI_E='a2d2fb' ## Bright Cyan
-#    THEME_COLOR_CLI_F='ffffff' ## Bright White
-### Hybrid theme: https://github.com/devinceble/Elementary-OS-Terminal-Colors/blob/master/images/Hybrid.png.
-#elif [ "${THEME}" = 'hybrid' ]; then
-#    THEME_COLOR_CLI_0='282a2e' ## Black
-#    THEME_COLOR_CLI_1='a54242' ## Red
-#    THEME_COLOR_CLI_2='8c9440' ## Green
-#    THEME_COLOR_CLI_3='de935f' ## Yellow
-#    THEME_COLOR_CLI_4='5f819d' ## Blue
-#    THEME_COLOR_CLI_5='85678f' ## Magenta
-#    THEME_COLOR_CLI_6='5e8d87' ## Cyan
-#    THEME_COLOR_CLI_7='969896' ## White
-#    THEME_COLOR_CLI_8='373b41' ## Bright Black
-#    THEME_COLOR_CLI_9='cc6666' ## Bright Red
-#    THEME_COLOR_CLI_A='b5bd68' ## Bright Green
-#    THEME_COLOR_CLI_B='f0c674' ## Bright Yellow
-#    THEME_COLOR_CLI_C='81a2be' ## Bright Blue
-#    THEME_COLOR_CLI_D='b294bb' ## Bright Magenta
-#    THEME_COLOR_CLI_E='8abeb7' ## Bright Cyan
-#    THEME_COLOR_CLI_F='c5c8c6' ## Bright White
-#fi
-
-
+clear
