@@ -79,58 +79,30 @@ setopt   NO_NOMATCH
 ################################################################################
 ##                                    KEYS                                    ##
 ################################################################################
-## Create a zkbd compatible hash.
-#typeset -g -A key
-#key[Backspace]="${terminfo[kbs]}"
-#key[Insert]="${terminfo[kich1]}"
-#key[Up]="${terminfo[kcuu1]}"
-#key[Down]="${terminfo[kcud1]}"
-#key[Left]="${terminfo[kcub1]}"
-#key[Right]="${terminfo[kcuf1]}"
-#key[Home]="${terminfo[khome]}"
-#key[End]="${terminfo[kend]}"
-#key[Delete]="${terminfo[kdch1]}"
-#key[Shift-Tab]="${terminfo[kcbt]}"
-#key[PageUp]="${terminfo[kpp]}"
-#key[PageDown]="${terminfo[knp]}"
+## Create a zkbd compatible hash ('https://wiki.archlinux.org/title/zsh#Key_bindings').
+typeset -g -A key
+key[Backspace]="${terminfo[kbs]}"
+key[Insert]="${terminfo[kich1]}"
+key[Up]="${terminfo[kcuu1]}"
+key[Down]="${terminfo[kcud1]}"
+key[Left]="${terminfo[kcub1]}"
+key[Right]="${terminfo[kcuf1]}"
+key[Home]="${terminfo[khome]}"
+key[End]="${terminfo[kend]}"
+key[Delete]="${terminfo[kdch1]}"
+key[Shift-Tab]="${terminfo[kcbt]}"
 
 ## Setup keys.
-#[ -n "${key[Backspace]}" ] && bindkey -- "${key[Backspace]}" backward-delete-char
-#[ -n "${key[Insert]}"    ] && bindkey -- "${key[Insert]}"    overwrite-mode
-#[ -n "${key[Up]}"        ] && bindkey -- "${key[Up]}"        up-line-or-history
-#[ -n "${key[Down]}"      ] && bindkey -- "${key[Down]}"      down-line-or-history
-#[ -n "${key[Left]}"      ] && bindkey -- "${key[Left]}"      backward-char
-#[ -n "${key[Right]}"     ] && bindkey -- "${key[Right]}"     forward-char
-#[ -n "${key[Home]}"      ] && bindkey -- "${key[Home]}"      beginning-of-line
-#[ -n "${key[End]}"       ] && bindkey -- "${key[End]}"       end-of-line
-#[ -n "${key[Delete]}"    ] && bindkey -- "${key[Delete]}"    delete-char
-#[ -n "${key[Shift-Tab]}" ] && bindkey -- "${key[Shift-Tab]}" reverse-menu-complete
-#[ -n "${key[PageUp]}"    ] && bindkey -- "${key[PageUp]}"    beginning-of-buffer-or-history
-#[ -n "${key[PageDown]}"  ] && bindkey -- "${key[PageDown]}"  end-of-buffer-or-history
-
-## Setup keys (vi mode).
-#[ -n "${key[Backspace]}" ] && bindkey -M vicmd "${key[Backspace]}" backward-delete-char
-#[ -n "${key[Insert]}"    ] && bindkey -M vicmd "${key[Insert]}"    overwrite-mode
-#[ -n "${key[Up]}"        ] && bindkey -M vicmd "${key[Up]}"        up-line-or-history
-#[ -n "${key[Down]}"      ] && bindkey -M vicmd "${key[Down]}"      down-line-or-history
-#[ -n "${key[Left]}"      ] && bindkey -M vicmd "${key[Left]}"      backward-char
-#[ -n "${key[Right]}"     ] && bindkey -M vicmd "${key[Right]}"     forward-char
-#[ -n "${key[Home]}"      ] && bindkey -M vicmd "${key[Home]}"      beginning-of-line
-#[ -n "${key[End]}"       ] && bindkey -M vicmd "${key[End]}"       end-of-line
-#[ -n "${key[Delete]}"    ] && bindkey -M vicmd "${key[Delete]}"    delete-char
-#[ -n "${key[Shift-Tab]}" ] && bindkey -M vicmd "${key[Shift-Tab]}" reverse-menu-complete
-#[ -n "${key[PageUp]}"    ] && bindkey -M vicmd "${key[PageUp]}"    beginning-of-buffer-or-history
-#[ -n "${key[PageDown]}"  ] && bindkey -M vicmd "${key[PageDown]}"  end-of-buffer-or-history
-
-## Make sure that terminal is in application mode, when zle is active,
-## otherwise $terminfo values are invalid.
-#if (( ${+terminfo[smkx]} && ${+terminfo[rmkx]} )); then
-#    autoload -Uz add-zle-hook-widget
-#    function zle_application_mode_start { echoti smkx; }
-#    function zle_application_mode_stop  { echoti rmkx; }
-#    add-zle-hook-widget -Uz zle-line-init   zle_application_mode_start
-#    add-zle-hook-widget -Uz zle-line-finish zle_application_mode_stop
-#fi
+[ -n "${key[Backspace]}" ] && bindkey -- "${key[Backspace]}" backward-delete-char
+[ -n "${key[Insert]}"    ] && bindkey -- "${key[Insert]}"    overwrite-mode
+[ -n "${key[Up]}"        ] && bindkey -- "${key[Up]}"        up-line-or-history
+[ -n "${key[Down]}"      ] && bindkey -- "${key[Down]}"      down-line-or-history
+[ -n "${key[Left]}"      ] && bindkey -- "${key[Left]}"      backward-char
+[ -n "${key[Right]}"     ] && bindkey -- "${key[Right]}"     forward-char
+[ -n "${key[Home]}"      ] && bindkey -- "${key[Home]}"      beginning-of-line
+[ -n "${key[End]}"       ] && bindkey -- "${key[End]}"       end-of-line
+[ -n "${key[Delete]}"    ] && bindkey -- "${key[Delete]}"    delete-char
+[ -n "${key[Shift-Tab]}" ] && bindkey -- "${key[Shift-Tab]}" reverse-menu-complete
 
 ################################################################################
 ##                                 VARIABLES                                  ##
@@ -301,7 +273,7 @@ alias nvrun='__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia'
 getshell() {
     SHELLFILE="$(\ps -o cmd -h -p ${$} | \cut -d " " -f 1)"
     [ "${SHELLFILE#-}" != "${SHELLFILE}" ] && ISLOGIN='-' || ISLOGIN=''
-    \echo "${ISLOGIN}$(\basename $(\readlink -f "${SHELLFILE#-}"))"
+    echo "${ISLOGIN}$(\basename $(\readlink -f "${SHELLFILE#-}"))"
 }
 
 ################################################################################
@@ -310,14 +282,28 @@ getshell() {
 ########################################
 ##               CURSOR               ##
 ########################################
-## Source: 'https://orelfichman.com/blog/terminal-escape-codes-are-awesome'.
-#echo -e '\e[0 q' ## Reset to default.
-#echo -e '\e[1 q' ## Blinking block.
-#echo -e '\e[2 q' ## Steady block (Default).
-#echo -e '\e[3 q' ## Blinking underscore.
-#echo -e '\e[4 q' ## Steady underscore.
-echo -e '\e[5 q' ## Blinking bar.
-#echo -e '\e[6 q' ## Steady bar.
+## Source: 'https://orelfichman.com/blog/terminal-escape-codes-are-awesome' and
+## 'https://www.reddit.com/r/vim/comments/mxhcl4/setting_cursor_indicator_for_zshvi_mode_in'.
+#echo -ne '\e[0 q' ## Reset to default.
+#echo -ne '\e[1 q' ## Blinking block.
+#echo -ne '\e[2 q' ## Steady block (default).
+#echo -ne '\e[3 q' ## Blinking underscore.
+#echo -ne '\e[4 q' ## Steady underscore.
+echo -ne '\e[5 q' ## Blinking bar.
+#echo -ne '\e[6 q' ## Steady bar.
+
+## Executed every time "${KEYMAP}" changes (vicmd,viins...).
+zle-keymap-select () {
+    case "${KEYMAP}" in
+        vicmd)
+            echo -ne '\e[1 q' ## Blinking block.
+            ;;
+        *)
+            echo -ne '\e[5 q' ## Blinking bar.
+            ;;
+    esac
+}
+zle -N zle-keymap-select
 
 ########################################
 ##        SYNTAX HIGHLIGHTING         ##
@@ -453,20 +439,21 @@ fi
 ########################################
 if [ "${TERM}" = "linux" ]; then
     ## Load unicode font support.
-    unicode_start
+    \unicode_start
 
     ## Set PSFU font manually.
     [ -f '/usr/share/consolefonts/Uni1-Fixed16.psf.gz' ] && \
-        setfont Uni1-Fixed16
+        \setfont Uni1-Fixed16
 
     ## Set up numlock, capslock and scrolllock.
-    setleds -D +num
-    setleds -D -caps
-    setleds -D -scroll
+    \setleds -D +num
+    \setleds -D -caps
+    \setleds -D -scroll
 
     ## Terminal colors.
+    THEME=''
     #THEME='1337'
-    THEME='github-dark'
+    #THEME='github-dark'
 
     if [ "${THEME}" = '1337' ]; then
         COLOR='00ff00'
@@ -505,22 +492,24 @@ if [ "${TERM}" = "linux" ]; then
         THEME_COLOR_CLI_F='ffffff' ## Bright White
     fi
 
-    echo -en "\033]P0${THEME_COLOR_CLI_0}" ## Black
-    echo -en "\033]P1${THEME_COLOR_CLI_1}" ## Red
-    echo -en "\033]P2${THEME_COLOR_CLI_2}" ## Green
-    echo -en "\033]P3${THEME_COLOR_CLI_3}" ## Yellow
-    echo -en "\033]P4${THEME_COLOR_CLI_4}" ## Blue
-    echo -en "\033]P5${THEME_COLOR_CLI_5}" ## Magenta
-    echo -en "\033]P6${THEME_COLOR_CLI_6}" ## Cyan
-    echo -en "\033]P7${THEME_COLOR_CLI_7}" ## White
-    echo -en "\033]P8${THEME_COLOR_CLI_8}" ## Bright Black
-    echo -en "\033]P9${THEME_COLOR_CLI_9}" ## Bright Red
-    echo -en "\033]PA${THEME_COLOR_CLI_A}" ## Bright Green
-    echo -en "\033]PB${THEME_COLOR_CLI_B}" ## Bright Yellow
-    echo -en "\033]PC${THEME_COLOR_CLI_C}" ## Bright Blue
-    echo -en "\033]PD${THEME_COLOR_CLI_D}" ## Bright Magenta
-    echo -en "\033]PE${THEME_COLOR_CLI_E}" ## Bright Cyan
-    echo -en "\033]PF${THEME_COLOR_CLI_F}" ## Bright White
+    if [ -n "${THEME}" ]; then
+        echo -en "\033]P0${THEME_COLOR_CLI_0}" ## Black
+        echo -en "\033]P1${THEME_COLOR_CLI_1}" ## Red
+        echo -en "\033]P2${THEME_COLOR_CLI_2}" ## Green
+        echo -en "\033]P3${THEME_COLOR_CLI_3}" ## Yellow
+        echo -en "\033]P4${THEME_COLOR_CLI_4}" ## Blue
+        echo -en "\033]P5${THEME_COLOR_CLI_5}" ## Magenta
+        echo -en "\033]P6${THEME_COLOR_CLI_6}" ## Cyan
+        echo -en "\033]P7${THEME_COLOR_CLI_7}" ## White
+        echo -en "\033]P8${THEME_COLOR_CLI_8}" ## Bright Black
+        echo -en "\033]P9${THEME_COLOR_CLI_9}" ## Bright Red
+        echo -en "\033]PA${THEME_COLOR_CLI_A}" ## Bright Green
+        echo -en "\033]PB${THEME_COLOR_CLI_B}" ## Bright Yellow
+        echo -en "\033]PC${THEME_COLOR_CLI_C}" ## Bright Blue
+        echo -en "\033]PD${THEME_COLOR_CLI_D}" ## Bright Magenta
+        echo -en "\033]PE${THEME_COLOR_CLI_E}" ## Bright Cyan
+        echo -en "\033]PF${THEME_COLOR_CLI_F}" ## Bright White
+    fi
 
     ## Unset temporary (non-exported) variables.
     unset THEME THEME_COLOR_CLI_0 THEME_COLOR_CLI_1 THEME_COLOR_CLI_2 \
@@ -534,7 +523,7 @@ fi
 ##              GENERAL               ##
 ########################################
 ## Set tab width to 4 (default: 8).
-tabs 4
+\tabs 4
 
 ## Security clear.
-clear
+\clear
