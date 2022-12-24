@@ -204,6 +204,7 @@ alias tree='\tree -C'
 alias file='\file -p'
 
 ## Text reading.
+alias cat='\cat -v'
 alias grep='\grep --color=${COLOR_MODE}'
 alias egrep='\grep -E --color=${COLOR_MODE}'
 alias diff='\diff --color=${COLOR_MODE} -s'
@@ -262,6 +263,9 @@ alias pname='\ps -o cmd -h -p'
 alias cpf='\cp -rTd --'
 alias path='\realpath -s'
 alias linkpath='\readlink -f'
+
+## Network.
+alias ipa='\ip --color=${COLOR_MODE} -br a'
 
 ## Gaming.
 alias nvrun='__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia'
